@@ -11,6 +11,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
+        echo "📦 Checking out code from GitHub..."
         git branch: 'main',
             url: 'https://github.com/jacoisrael2/flask-ci-cd.git',
             credentialsId: 'github-creds'
@@ -35,9 +36,15 @@ pipeline {
     stage('Deploy on K3s') {
       steps {
         sh '''
-        echo "🛠️ Deploying to K3s..."
-        helm upgrade --install flask-ci-cd ./helm -n $NAMESPACE \
-          --set image.repository=$IMAGE_NAME,image.tag=latest
+          echo "🛠️ Deploying to K3s..."
+          
+          if [ ! -d "./helm-chart" ]; then
+            echo "❌ Helm chart directory not found! Expected ./helm-chart"
+            exit 1
+          fi
+          
+          helm upgrade --install flask-ci-cd ./helm-chart -n $NAMESPACE \
+            --set image.repository=$IMAGE_NAME,image.tag=latest
         '''
       }
     }
