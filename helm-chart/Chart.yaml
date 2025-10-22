@@ -1,0 +1,5 @@
+apiVersion: v2
+name: flask-ci-cd
+version: 0.1.0
+description: Simple Flask App deployed via Jenkins CI/CD on K3s
+
